@@ -1,0 +1,13 @@
+@import './fonts.css';
+
+:root {
+
+}
+
+html {
+
+}
+
+body {
+    font-family: 'Inter Variable', 'Noto Sans SC Variable', sans-serif;
+}

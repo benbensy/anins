@@ -8,10 +8,24 @@ import icons from 'unplugin-icons/vite'
 
 export default defineConfig({
   main: {
-    plugins: [externalizeDepsPlugin(), yaml()]
+    plugins: [externalizeDepsPlugin(), yaml()],
+    build: {
+      rollupOptions: {
+        output: {
+          format: 'es'
+        }
+      }
+    }
   },
   preload: {
-    plugins: [externalizeDepsPlugin()]
+    plugins: [externalizeDepsPlugin()],
+    build: {
+      rollupOptions: {
+        output: {
+          format: 'es'
+        }
+      }
+    }
   },
   renderer: {
     resolve: {

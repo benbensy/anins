@@ -3,10 +3,19 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import Store from 'electron-store'
 import icon from '../../resources/icon.png?asset'
-import { EXTENSIONS_DIR, STATE_DATA_DIR } from './constants/app'
+import { STATE_DATA_DIR } from './constants/app'
 
 import builderConfig from '../../electron-builder.yml'
 import { registerWindowHandlers } from './handlers/window'
+
+import { executeInIsolatedContext } from './extension/execute'
+
+executeInIsolatedContext(
+  `export function log() {
+    console.log('log')
+  }`,
+  'log'
+)
 
 interface WindowState {
   width: number
@@ -107,8 +116,6 @@ function createWindow() {
 app.whenReady().then(() => {
   // Set app user model id for windows
   electronApp.setAppUserModelId(builderConfig.appId)
-
-  console.log(EXTENSIONS_DIR)
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.

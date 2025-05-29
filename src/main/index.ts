@@ -1,20 +1,13 @@
-import { app, shell, BrowserWindow, ipcMain, screen } from 'electron'
-import { join } from 'path'
+import { app, shell, BrowserWindow, ipcMain, screen, session } from 'electron'
+import { join, resolve } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
 import builderConfig from '../../electron-builder.yml'
 import { registerWindowHandlers } from './handlers/window'
 
-import { executeInIsolatedContext } from './extension/execute'
 import { store } from './store'
-
-executeInIsolatedContext(
-  `export function log() {
-    console.log('log')
-  }`,
-  'log'
-)
+import { fork } from 'child_process'
 
 function createWindow() {
   const savedState = store.get('windowState')
@@ -34,6 +27,8 @@ function createWindow() {
     }
   }
 
+  const apiPort = Number(process.env.VITE_API_PORT)
+
   const mainWindow = new BrowserWindow({
     ...savedState,
     show: false,
@@ -45,9 +40,29 @@ function createWindow() {
       preload: join(__dirname, '../preload/index.mjs'),
       sandbox: false,
       nodeIntegration: false,
-      contextIsolation: true
+      contextIsolation: true,
+      webSecurity: true
     },
     titleBarStyle: 'hidden'
+  })
+
+  // Set Content Security Policy
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    const csp = [
+      "default-src 'self'",
+      `connect-src 'self' http://localhost:${apiPort} ws://localhost:${apiPort}`,
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data:",
+      "font-src 'self'"
+    ].join('; ')
+
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Content-Security-Policy': [csp]
+      }
+    })
   })
 
   if (savedState.isMaximized) {
@@ -90,6 +105,8 @@ function createWindow() {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
+
+fork(resolve(__dirname, './web-api.js'))
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

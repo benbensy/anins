@@ -1,12 +1,11 @@
 import MaterialSymbolsCloseRounded from '~icons/material-symbols/close-rounded'
 import MaterialSymbolsCrop54Outline from '~icons/material-symbols/crop-5-4-outline'
 import MaterialSymbolsRemoveRounded from '~icons/material-symbols/remove-rounded'
-import MaterialSymbolsArrowBackRounded from '~icons/material-symbols/arrow-back-rounded'
 
 import Logo from '../../../../../resources/icon.png'
 
 import { SearchBox } from './SearchBox/SearchBox'
-import { Button, Image } from '@arco-design/web-react'
+import { Image } from '@arco-design/web-react'
 
 export function TitleBar() {
   const handleMinimize = () => {
@@ -23,16 +22,10 @@ export function TitleBar() {
 
   return (
     <div
-      className="sticky top-0 z-10 w-full flex flex-row justify-between items-center gap-2 p-2 box-border"
+      className="sticky top-0 z-10 w-full flex flex-row justify-between items-center gap-2 p-2 box-border border-b-solid border-b-[1px] border-gray-200"
       style={{ appRegion: 'drag' }}
     >
       <div className="flex flex-row items-center gap-2 px-1.5">
-        <Button
-          style={{ appRegion: 'no-drag', color: 'var(--color-text-2)' }}
-          type="text"
-          status="default"
-          icon={<MaterialSymbolsArrowBackRounded />}
-        />
         <Image simple height={20} src={Logo} />
         <span
           className="text-lg font-bold"

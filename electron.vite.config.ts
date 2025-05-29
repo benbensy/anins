@@ -13,6 +13,10 @@ export default defineConfig({
       rollupOptions: {
         output: {
           format: 'es'
+        },
+        input: {
+          index: resolve('src/main/index.ts'),
+          'web-api': resolve('src/web-api/index.ts')
         }
       }
     }

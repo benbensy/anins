@@ -1,20 +1,19 @@
 import { Form, Input, Popover } from '@arco-design/web-react'
 
-import { useBoundStore } from '@renderer/store'
 import { IconSearch } from '@arco-design/web-react/icon'
 import styles from './SearchBox.module.css'
 import clsx from 'clsx'
+import { useNavigate } from 'react-router-dom'
 
 export function SearchBox() {
+  const navigate = useNavigate()
   const [form] = Form.useForm()
-
-  const { keyword } = useBoundStore((state) => state.search)
-
-  console.log(keyword)
 
   async function handleSubmit(values: { keyword: string }) {
     if (values.keyword) {
-      console.log(values.keyword)
+      const searchParams = new URLSearchParams()
+      searchParams.set('keyword', values.keyword)
+      navigate(`/search?${searchParams}`, { replace: true })
     }
   }
 
@@ -29,6 +28,7 @@ export function SearchBox() {
             className={clsx(styles.SearchBox, 'min-w-md')}
             addAfter={<IconSearch className="py-2 px-3" onClick={form.submit} />}
             afterStyle={{ cursor: 'pointer', padding: '0' }}
+            placeholder="搜索视频"
           />
         </Form.Item>
       </Popover>

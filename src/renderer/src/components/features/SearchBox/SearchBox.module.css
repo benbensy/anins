@@ -1,0 +1,18 @@
+.SearchBox :global(.arco-input-group) {
+    @apply transition-colors;
+    background-color: var(--color-fill-2);
+    border: 1px solid transparent;
+}
+
+.SearchBox :global(.arco-input-group:focus-within) {
+    @apply bg-transparent;
+    border: 1px solid rgb(var(--primary-6));
+}
+
+.SearchBox :global(.arco-input-inner-wrapper) {
+    @apply bg-transparent border-none;
+}
+
+.SearchBox :global(.arco-input-group-addafter) {
+    @apply border-none;
+}

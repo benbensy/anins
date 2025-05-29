@@ -1,7 +1,9 @@
 import * as window from './window'
+import * as searchHistory from './search-history'
 
 export const api = {
-  ...window
+  ...window,
+  ...searchHistory
 }
 
 export type Api = typeof api

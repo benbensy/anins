@@ -1,14 +1,13 @@
 import { app, shell, BrowserWindow, ipcMain, screen } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import Store from 'electron-store'
 import icon from '../../resources/icon.png?asset'
-import { STATE_DATA_DIR } from './constants/app'
 
 import builderConfig from '../../electron-builder.yml'
 import { registerWindowHandlers } from './handlers/window'
 
 import { executeInIsolatedContext } from './extension/execute'
+import { store } from './store'
 
 executeInIsolatedContext(
   `export function log() {
@@ -17,26 +16,8 @@ executeInIsolatedContext(
   'log'
 )
 
-interface WindowState {
-  width: number
-  height: number
-  x?: number
-  y?: number
-  isMaximized: boolean
-}
-
-const stateStore = new Store<{ windowState: WindowState }>({
-  cwd: STATE_DATA_DIR
-})
-
 function createWindow() {
-  const defaultWindowState: WindowState = {
-    width: 1280,
-    height: 720,
-    isMaximized: false
-  }
-
-  const savedState = stateStore.get('windowState', defaultWindowState)
+  const savedState = store.get('windowState')
 
   const primaryDisplay = screen.getPrimaryDisplay()
   const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize
@@ -74,7 +55,7 @@ function createWindow() {
   }
   const saveWindowState = () => {
     const bounds = mainWindow.getBounds()
-    stateStore.set('windowState', {
+    store.set('windowState', {
       ...bounds,
       isMaximized: mainWindow.isMaximized()
     })

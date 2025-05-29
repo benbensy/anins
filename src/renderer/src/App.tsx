@@ -1,10 +1,13 @@
-import { TitleBar } from './components/features/TitleBar'
+import { ConfigProvider } from '@arco-design/web-react'
+import { Outlet, RouterProvider } from 'react-router-dom'
+import { router } from './router'
 
 export default function App() {
   return (
-    <div className="flex flex-col">
-      <TitleBar />
-      <div></div>
-    </div>
+    <ConfigProvider>
+      <RouterProvider router={router}>
+        <Outlet />
+      </RouterProvider>
+    </ConfigProvider>
   )
 }

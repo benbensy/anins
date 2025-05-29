@@ -5,9 +5,14 @@
 }
 
 html {
-
+    @apply w-screen h-screen;
 }
 
 body {
     font-family: 'Inter Variable', 'Noto Sans SC Variable', sans-serif;
+    @apply w-full h-full overflow-hidden;
+}
+
+#root {
+    @apply w-full h-full;
 }

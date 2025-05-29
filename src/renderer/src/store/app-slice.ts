@@ -1,9 +1,9 @@
-import type { StateCreator } from 'zustand'
+import { createSlice } from 'zustand-slices'
 
-export interface AppSlice {
-  version: string
-}
-
-export const createAppSlice: StateCreator<AppSlice> = () => ({
-  version: window.electron.process.versions.electron ?? ''
+export const appSlice = createSlice({
+  name: 'app',
+  value: {
+    version: window.electron.process.versions.electron ?? ''
+  },
+  actions: {}
 })

@@ -1,18 +1,19 @@
-// src/main/extension/isolate.worker.ts
 import { workerData, parentPort, isMainThread } from 'node:worker_threads'
-import { fileURLToPath } from 'node:url'
+import vm from 'node:vm'
 import { transform } from '@swc/core'
+import { defineConfig } from './define'
 
 if (!isMainThread && parentPort) {
-  const { id, code, functionName, args } = workerData
+  const { id, args, action } = workerData
 
+  if (action === 'get-info') {
+    parse(id, args[0])
+  }
+}
+
+async function parse(id: string, code: string) {
   const context = {
-    require,
     console,
-    module: { exports: {} },
-    exports: {},
-    __filename: fileURLToPath(import.meta.url),
-    __dirname: fileURLToPath(new URL('.', import.meta.url)),
     URL,
     TextEncoder,
     TextDecoder,
@@ -26,53 +27,53 @@ if (!isMainThread && parentPort) {
     process
   }
 
-  async function execute() {
-    try {
-      const { code: commonjsCode } = await transform(code, {
-        jsc: {
-          parser: {
-            syntax: 'typescript',
-            tsx: false,
-            decorators: false
-          },
-          target: 'es2020'
+  try {
+    const { code: commonjsCode } = await transform(code, {
+      jsc: {
+        parser: {
+          syntax: 'typescript',
+          tsx: false,
+          decorators: false
         },
-        module: {
-          type: 'commonjs',
-          strict: false,
-          strictMode: true,
-          lazy: false,
-          ignoreDynamic: true
-        }
-      })
-
-      const fn = new Function(`
-        'use strict';
-        const module = { exports: {} };
-        const exports = module.exports;
-        ${commonjsCode}
-        return module.exports.${functionName} || ${functionName};
-      `).call(context)
-
-      if (typeof fn !== 'function') {
-        throw new Error(`Expected ${functionName} to be a function, got ${typeof fn}`)
+        target: 'es2020',
+        keepClassNames: true
+      },
+      module: {
+        type: 'commonjs',
+        strict: false,
+        strictMode: true,
+        lazy: false,
+        ignoreDynamic: true
       }
+    })
 
-      const result = await Promise.resolve(fn(...args))
-
-      parentPort?.postMessage({
-        id,
-        type: 'result',
-        result
-      })
-    } catch (error) {
-      parentPort?.postMessage({
-        id,
-        type: 'error',
-        error: error instanceof Error ? error.message : String(error)
-      })
+    const sandbox = {
+      ...context,
+      defineConfig,
+      exports: {},
+      console: console
     }
-  }
 
-  execute()
+    const vmContext = vm.createContext(sandbox)
+
+    const script = new vm.Script(commonjsCode)
+    script.runInContext(vmContext, {
+      displayErrors: true,
+      timeout: 5000
+    })
+
+    const result = JSON.parse(JSON.stringify(sandbox.exports))
+
+    parentPort?.postMessage({
+      id,
+      type: 'result',
+      result
+    })
+  } catch (error) {
+    parentPort?.postMessage({
+      id,
+      type: 'error',
+      error: error instanceof Error ? error.message : String(error)
+    })
+  }
 }

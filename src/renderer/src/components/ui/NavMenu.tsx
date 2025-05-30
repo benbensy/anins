@@ -18,7 +18,9 @@ export function NavMenu({ items }: { items: NavMenuMenuItem[] }) {
   const [selectedKeys, setSelectedKeys] = useState<string[]>([])
 
   useEffect(() => {
-    const currentItem = items.find((item) => location.pathname === item.to)
+    const currentItem = items.find(
+      (item) => location.pathname === item.to || location.pathname.startsWith(`${item.to}/`)
+    )
     if (currentItem) {
       setSelectedKeys([currentItem.key])
     } else {

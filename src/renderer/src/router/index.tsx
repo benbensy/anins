@@ -1,10 +1,13 @@
 import { lazy } from 'react'
 import { createBrowserRouter, RouteObject } from 'react-router-dom'
 
+const NotFoundPage = lazy(() => import('../pages/NotFoundPage'))
+
 const BaseLayout = lazy(() => import('../layouts/BaseLayout'))
 const IndexPage = lazy(() => import('../pages/IndexPage'))
 const SearchPage = lazy(() => import('../pages/SearchPage'))
-const ExtensionPage = lazy(() => import('../pages/ExtensionPage'))
+const ExtensionDash = lazy(() => import('../pages/ExtensionDashPage'))
+const ExtensionGallery = lazy(() => import('../pages/ExtensionGalleryPage'))
 
 export const routes: RouteObject[] = [
   {
@@ -12,20 +15,24 @@ export const routes: RouteObject[] = [
     element: <BaseLayout />,
     children: [
       {
-        path: '/',
+        index: true,
         element: <IndexPage />
       },
       {
-        path: '/search',
+        path: 'search',
         element: <SearchPage />
       },
       {
-        path: '/extension',
-        element: <ExtensionPage />
+        path: 'extension',
+        element: <ExtensionDash />
+      },
+      {
+        path: 'extension/gallery',
+        element: <ExtensionGallery />
       },
       {
         path: '*',
-        element: <div>404</div>
+        element: <NotFoundPage />
       }
     ]
   }

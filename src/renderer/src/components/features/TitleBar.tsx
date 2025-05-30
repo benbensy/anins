@@ -4,7 +4,7 @@ import MaterialSymbolsRemoveRounded from '~icons/material-symbols/remove-rounded
 
 import Logo from '../../../../../resources/icon.png'
 
-import { SearchBox } from './SearchBox/SearchBox'
+import { SearchBox } from './SearchBox'
 import { Image } from '@arco-design/web-react'
 
 export function TitleBar() {

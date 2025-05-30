@@ -1,27 +1,24 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { Worker } from 'node:worker_threads'
 import IsolateWorker from './isolate.worker?modulePath'
+import { Worker } from 'node:worker_threads'
+import { v4 as uuid } from 'uuid'
+import { Extension } from './define'
+import { omit } from 'es-toolkit'
 
-export function executeInIsolatedContext(
-  code: string,
-  functionName: string,
-  args: any[] = []
-): Promise<any> {
-  return new Promise((resolve, reject) => {
+export function getExtensionInfo(code: string) {
+  return new Promise<Omit<Extension, 'fetchers'>>((resolve, reject) => {
     const worker = new Worker(IsolateWorker, {
       workerData: {
-        id: Math.random().toString(36).substring(7),
-        code,
-        functionName,
-        args
+        id: uuid(),
+        action: 'get-info',
+        args: [code]
       }
     })
 
     worker.on('message', (message) => {
       if (message.type === 'result') {
         worker.terminate()
-        resolve(message.result)
+        const info = omit(message.result.default as Extension, ['fetchers'])
+        resolve(info)
       } else if (message.type === 'error') {
         worker.terminate()
         reject(new Error(message.error))

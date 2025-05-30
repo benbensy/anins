@@ -1,0 +1,3 @@
+.uploader :global(.arco-upload-trigger > div) {
+    @apply flex flex-col items-center justify-center;
+}

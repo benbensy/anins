@@ -1,7 +1,7 @@
 import { Form, Input, Popover } from '@arco-design/web-react'
 
 import { IconSearch } from '@arco-design/web-react/icon'
-import styles from './SearchBox.module.css'
+import styles from './SearchBox/SearchBox.module.css'
 import clsx from 'clsx'
 import { useNavigate } from 'react-router-dom'
 

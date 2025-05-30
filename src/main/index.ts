@@ -9,6 +9,9 @@ import { registerWindowHandlers } from './handlers/window'
 import { store } from './store'
 import { fork } from 'child_process'
 
+import { registerSearchHistoryHandlers } from './handlers/seach-history'
+import { registerExtensionHandlers } from './handlers/extension'
+
 function createWindow() {
   const savedState = store.get('windowState')
 
@@ -134,6 +137,8 @@ app.whenReady().then(() => {
   })
 
   registerWindowHandlers()
+  registerSearchHistoryHandlers()
+  registerExtensionHandlers()
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common

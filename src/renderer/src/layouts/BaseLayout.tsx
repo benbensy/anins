@@ -10,7 +10,7 @@ export default function BaseLayout() {
       <div className="w-full h-full">
         <div className="flex flex-col h-full">
           <TitleBar />
-          <div className="flex-1 p-2 h-full flex-1 box-border">
+          <div className="flex-1 h-full flex-1 box-border">
             <ErrorBoundary fallback={<div>Something went wrong</div>}>
               <Outlet />
             </ErrorBoundary>
